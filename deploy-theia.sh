@@ -2,6 +2,7 @@
 
 # 0. Create project
 NAMESPACE=${1:-enablement-workspace}
+PASSWORD=${2:-Thisismypassw0rd}
 echo "using namesapce ${NAMESPACE}"
 oc new-project ${NAMESPACE}
 
@@ -25,7 +26,7 @@ oc delete dc/nginxbase
 oc delete svc/nginxbase
 
 oc new-app --strategy=docker nginxbase~$(pwd)/nginx-reverse --name=myreverseproxy  --allow-missing-imagestream-tags
-htpasswd -cb nginx-reverse/htpasswd developer this-is-a-test
+htpasswd -cb nginx-reverse/htpasswd developer ${PASSWORD}
 oc start-build myreverseproxy --from-dir=$(pwd)/nginx-reverse
 oc expose svc/myreverseproxy
 oc create route edge ide --service=myreverseproxy
