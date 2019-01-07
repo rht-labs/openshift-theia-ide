@@ -19,6 +19,21 @@ for port in $PORT_LIST; do
     fi;
 done;
 
+# Persistent Volume for Workspace
+oc create -f - <<EOF
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: theia-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+EOF
+oc set volume dc/theia --add --overwrite -t persistentVolumeClaim --claim-name=theia-data --name=theia-data --mount-path=/home/project
+
 # 2. Deploy the IDE build etc
 oc new-app registry.access.redhat.com/rhscl/nginx-112-rhel7~$(pwd)/nginx-reverse --name=nginxbase
 oc start-build nginxbase --from-dir=$(pwd)/nginx-reverse
