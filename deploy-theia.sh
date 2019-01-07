@@ -42,6 +42,8 @@ oc delete svc/nginxbase
 
 oc new-app --strategy=docker nginxbase~$(pwd)/nginx-reverse --name=myreverseproxy  --allow-missing-imagestream-tags
 htpasswd -cb nginx-reverse/htpasswd developer ${PASSWORD}
+oc create secret generic htpasswd-secret --from-file=nginx-reverse/htpasswd
+oc set volume --name=htpasswd-secret dc/myreverseproxy --add --overwrite -m /opt/app-root/etc/nginx.default.d/htpasswd -t secret --secret-name htpasswd-secret
 oc start-build myreverseproxy --from-dir=$(pwd)/nginx-reverse
 oc expose svc/myreverseproxy
 oc create route edge ide --service=myreverseproxy
