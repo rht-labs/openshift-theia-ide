@@ -11,12 +11,11 @@ enabled=1 \n\
 gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc' >  mongodb-org-4.0.repo  && \
     mv mongodb-org-4.0.repo /etc/yum.repos.d/  && \
     curl -sL https://rpm.nodesource.com/setup_8.x | bash && \
-    yum install -y mongodb-org ansible zsh git curl gcc-c++ g++ automake python build-essential wget sudo nodejs
+    yum install -y mongodb-org ansible zsh git curl gcc-c++ g++ automake python build-essential wget sudo nodejs java-1.8.0-openjdk-devel && \
+    yum clean all
 
-ADD https://github.com/openshift/origin/releases/download/v3.11.0/openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz .
-RUN tar xvf openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz && \
-  mv openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit/oc /usr/local/bin && \
-  rm -rf openshift-origin*
+# Set the JAVA_HOME variable to make it clear where Java is located
+ENV JAVA_HOME /usr/lib/jvm/java
 
 ## User account
 RUN useradd -ms /bin/bash -d /home/theia theia && \
@@ -48,9 +47,9 @@ RUN unset NPM_CONFIG_PREFIX && \
 ENV GITHUB_TOKEN "xxx"
 WORKDIR $HOME/ide
 RUN source $HOME/.bashrc && \
-  echo '{"private":true,"dependencies":{"typescript":"latest", "@theia/plugin-ext":"next", "@theia/extension-manager":"next", "@theia/plugin-ext-vscode":"next","@theia/monaco":"next","@theia/editorconfig":"next",   "@theia/typescript":"next","@theia/navigator":"next","@theia/terminal":"next","@theia/outline-view":"next","@theia/preferences":"next","@theia/messages":"next","@theia/git":"next","@theia/file-search":"next","@theia/markers":"next","@theia/preview":"next","@theia/callhierarchy":"next","@theia/merge-conflicts":"next","@theia/search-in-workspace":"next","@theia/json":"next","@theia/textmate-grammars":"next","@theia/mini-browser":"next"},"devDependencies":{"@theia/cli":"next"}}' > package.json && \
+  echo '{"private":true,"dependencies":{"typescript":"latest","@theia/typescript":"next","@theia/navigator":"next","@theia/terminal":"next","@theia/plugin-ext-vscode":"next","@theia/monaco":"next","@theia/editorconfig":"next","@theia/outline-view":"next","@theia/preferences":"next","@theia/messages":"next","@theia/git":"next","@theia/file-search":"next","@theia/markers":"next","@theia/preview":"next","@theia/callhierarchy":"next","@theia/merge-conflicts":"next","@theia/search-in-workspace":"next","@theia/json":"next","@theia/textmate-grammars":"next","@theia/mini-browser":"next","@theia/plugin-ext":"next", "@theia/extension-manager":"next"},"devDependencies":{"@theia/cli":"next"}}' > package.json && \
   npm install -g yarn && \
-  yarn install
+  yarn install --verbose
 RUN source $HOME/.bashrc && \
   ls -la  && \
   yarn theia build
@@ -58,6 +57,11 @@ RUN source $HOME/.bashrc && \
 WORKDIR /home/theia/project
 # generic server ports
 EXPOSE 4200 4444 8080 9000 3000 8081 8082 8083 8084 3000
+
+ADD https://github.com/openshift/origin/releases/download/v3.11.0/openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz .
+RUN tar xvf openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz && \
+  mv openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit/oc /usr/local/bin && \
+  rm -rf openshift-origin*
 
 COPY entrypoint /home/theia 
 USER root
