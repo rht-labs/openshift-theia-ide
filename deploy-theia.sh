@@ -7,7 +7,8 @@ echo "using namesapce ${NAMESPACE}"
 oc new-project ${NAMESPACE}
 
 # 1. Build and Deploy the IDE build etc
-oc new-app $(pwd)/enablement-workspace-theia  --name=theia --strategy=docker                 
+oc new-app $(pwd)/enablement-workspace-theia  --name=theia --strategy=docker
+oc patch dc/theia -p '{"spec":{"strategy":{"type":"Recreate"}}}'                
 oc start-build theia --from-dir=$(pwd)/enablement-workspace-theia
 # oc expose svc/theia
 PORT_LIST=$(oc get svc/theia -o json --no-headers  | jq -r '.spec.ports[] | "\(.port)"')
