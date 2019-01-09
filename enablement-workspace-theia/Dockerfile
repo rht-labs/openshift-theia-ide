@@ -11,8 +11,13 @@ enabled=1 \n\
 gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc' >  mongodb-org-4.0.repo  && \
     mv mongodb-org-4.0.repo /etc/yum.repos.d/  && \
     curl -sL https://rpm.nodesource.com/setup_8.x | bash && \
-    yum install -y mongodb-org ansible zsh git curl gcc-c++ g++ automake python build-essential wget sudo nodejs java-1.8.0-openjdk-devel jq && \
+    yum install -y mongodb-org ansible zsh git curl gcc-c++ g++ automake python build-essential wget sudo nodejs java-1.8.0-openjdk-devel psmisc && \
     yum clean all
+
+# Install jq
+# http://stedolan.github.io/jq/
+RUN curl -o /usr/local/bin/jq -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
+chmod +x /usr/local/bin/jq
 
 # Set the JAVA_HOME variable to make it clear where Java is located
 ENV JAVA_HOME /usr/lib/jvm/java
@@ -57,7 +62,6 @@ RUN source $HOME/.bashrc && \
   echo '{"private":true,"dependencies":{"@theia/application-package":"0.4.0-next.f69caeba","@theia/typescript":"0.4.0-next.f69caeba","typescript":"latest","@theia/navigator":"0.4.0-next.f69caeba","@theia/terminal":"0.4.0-next.f69caeba","@theia/plugin-ext-vscode":"0.4.0-next.f69caeba","@theia/monaco":"0.4.0-next.f69caeba","@theia/editorconfig":"0.4.0-next.f69caeba","@theia/outline-view":"0.4.0-next.f69caeba","@theia/preferences":"0.4.0-next.f69caeba","@theia/messages":"0.4.0-next.f69caeba","@theia/git":"0.4.0-next.f69caeba","@theia/file-search":"0.4.0-next.f69caeba","@theia/markers":"0.4.0-next.f69caeba","@theia/preview":"0.4.0-next.f69caeba","@theia/callhierarchy":"0.4.0-next.f69caeba","@theia/merge-conflicts":"0.4.0-next.f69caeba","@theia/search-in-workspace":"0.4.0-next.f69caeba","@theia/json":"0.4.0-next.f69caeba","@theia/textmate-grammars":"0.4.0-next.f69caeba","@theia/mini-browser":"0.4.0-next.f69caeba","@theia/plugin-ext":"0.4.0-next.f69caeba", "@theia/extension-manager":"0.4.0-next.f69caeba"},"devDependencies":{"@theia/cli":"0.4.0-next.f69caeba"}}' > package.json && \
   npm install -g yarn && \
   yarn install --force  
-#  yarn install --verbose --force
 RUN source $HOME/.bashrc && \
   ls -la  && \
   yarn theia build
