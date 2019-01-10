@@ -224,7 +224,7 @@ objects:
       dockerStrategy:
         buildArgs:
         - name: "GITHUB_TOKEN"
-        value: "${GITHUB_TOKEN}"
+          value: "${GITHUB_TOKEN}"
         dockerfilePath: enablement-workspace-theia/Dockerfile
         from:
           kind: ImageStreamTag
@@ -483,4 +483,3 @@ parameters:
   displayName: Github Token
   name: GITHUB_TOKEN
   required: true
-  value: ""
