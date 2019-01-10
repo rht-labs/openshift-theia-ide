@@ -55,7 +55,8 @@ RUN unset NPM_CONFIG_PREFIX && \
   npm install -g @angular/cli yarn
 
 # Theia IDE install stuff 
-ENV GITHUB_TOKEN ""
+ARG GITHUB_TOKEN
+ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 WORKDIR $HOME/ide
 RUN source $HOME/.bashrc && \
 #   echo '{"private":true,"dependencies":{"@theia/application-package":"next","@theia/typescript":"next","typescript":"latest","@theia/navigator":"next","@theia/terminal":"next","@theia/plugin-ext-vscode":"next","@theia/monaco":"next","@theia/editorconfig":"next","@theia/outline-view":"next","@theia/preferences":"next","@theia/messages":"next","@theia/git":"next","@theia/file-search":"next","@theia/markers":"next","@theia/preview":"next","@theia/callhierarchy":"next","@theia/merge-conflicts":"next","@theia/search-in-workspace":"next","@theia/json":"next","@theia/textmate-grammars":"next","@theia/mini-browser":"next","@theia/plugin-ext":"next", "@theia/extension-manager":"next"},"devDependencies":{"@theia/cli":"next"}}' > package.json && \
