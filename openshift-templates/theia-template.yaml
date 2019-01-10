@@ -1,0 +1,486 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: theia
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      service.alpha.openshift.io/serving-cert-secret-name: proxy-tls
+    creationTimestamp: null
+    name: ide
+  spec:
+    ports:
+    - name: ide
+      port: 443
+      protocol: TCP
+      targetPort: 8443
+    selector:
+      app: theia
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: theia
+    name: theia
+  spec:
+    ports:
+    - name: 3000-tcp
+      port: 3000
+      protocol: TCP
+      targetPort: 3000
+    - name: 4200-tcp
+      port: 4200
+      protocol: TCP
+      targetPort: 4200
+    - name: 4444-tcp
+      port: 4444
+      protocol: TCP
+      targetPort: 4444
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: 8081-tcp
+      port: 8081
+      protocol: TCP
+      targetPort: 8081
+    - name: 8082-tcp
+      port: 8082
+      protocol: TCP
+      targetPort: 8082
+    - name: 8083-tcp
+      port: 8083
+      protocol: TCP
+      targetPort: 8083
+    - name: 8084-tcp
+      port: 8084
+      protocol: TCP
+      targetPort: 8084
+    - name: 9000-tcp
+      port: 9000
+      protocol: TCP
+      targetPort: 9000
+    selector:
+      app: theia
+      deploymentconfig: theia
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    generation: 18
+    labels:
+      app: theia
+    name: theia
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      app: theia
+      deploymentconfig: theia
+    strategy:
+      activeDeadlineSeconds: 21600
+      recreateParams:
+        timeoutSeconds: 600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Recreate
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: theia
+          deploymentconfig: theia
+      spec:
+        containers:
+        - image: theia:latest
+          imagePullPolicy: Always
+          name: theia
+          ports:
+          - containerPort: 4200
+            protocol: TCP
+          - containerPort: 8080
+            protocol: TCP
+          - containerPort: 9000
+            protocol: TCP
+          - containerPort: 3000
+            protocol: TCP
+          - containerPort: 8082
+            protocol: TCP
+          - containerPort: 8083
+            protocol: TCP
+          - containerPort: 8084
+            protocol: TCP
+          - containerPort: 4444
+            protocol: TCP
+          - containerPort: 8081
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /home/project
+            name: theia-data
+          - mountPath: /tmp/vscode-unpacked
+            name: theia-plugin-data
+        - args:
+          - --https-address=:8443
+          - --provider=openshift
+          - --openshift-service-account=ide
+          - --upstream=http://localhost:8080
+          - --tls-cert=/etc/tls/private/tls.crt
+          - --tls-key=/etc/tls/private/tls.key
+          - --cookie-secret=SECRET
+          image: openshift/oauth-proxy:latest
+          imagePullPolicy: IfNotPresent
+          name: oauth-proxy
+          ports:
+          - containerPort: 8443
+            name: public
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+          - mountPath: /etc/tls/private
+            name: proxy-tls
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        serviceAccount: ide
+        serviceAccountName: ide
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: theia-data
+          persistentVolumeClaim:
+            claimName: theia-data
+        - name: theia-plugin-data
+          persistentVolumeClaim:
+            claimName: theia-plugin-data
+        - name: proxy-tls
+          secret:
+            defaultMode: 420
+            secretName: proxy-tls
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - theia
+        from:
+          kind: ImageStreamTag
+          name: theia:latest
+      type: ImageChange
+  status: {}
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: theia
+    name: theia
+  spec:
+    failedBuildsHistoryLimit: 5
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: theia:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      git:
+        ref: master
+        uri: https://github.com/springdo/openshift-theia-ide.git
+      type: Git
+    strategy:
+      dockerStrategy:
+        buildArgs:
+        - name: "GITHUB_TOKEN"
+        value: "${GITHUB_TOKEN}"
+        dockerfilePath: enablement-workspace-theia/Dockerfile
+        from:
+          kind: ImageStreamTag
+          name: centos:centos7
+      type: Docker
+    successfulBuildsHistoryLimit: 5
+    triggers:
+    - github:
+        secret: 7uqdp8XlkT-IteMISzpt
+      type: GitHub
+    - generic:
+        secret: gR5-Dtb1Ie_6ILQrEcWd
+      type: Generic
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+  status:
+    lastVersion: 0
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    generation: 2
+    labels:
+      app: theia
+    name: centos
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations:
+        openshift.io/imported-from: centos:centos7
+      from:
+        kind: DockerImage
+        name: docker.io/centos:centos7
+      generation: 2
+      importPolicy: {}
+      name: centos7
+      referencePolicy:
+        type: Source
+  status:
+    dockerImageRepository: ""
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: theia
+    name: theia
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: library/theia:latest
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    name: ide
+  spec:
+    tls:
+      termination: reencrypt
+    to:
+      kind: Service
+      name: ide
+      weight: 100
+    wildcardPolicy: None
+  status: {}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: theia
+    name: ide-3000
+  spec:
+    port:
+      targetPort: 3000
+    to:
+      kind: Service
+      name: theia
+      weight: 100
+    wildcardPolicy: None
+  status: {}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: theia
+    name: ide-4200
+  spec:
+    port:
+      targetPort: 4200
+    to:
+      kind: Service
+      name: theia
+      weight: 100
+    wildcardPolicy: None
+  status: {}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: theia
+    name: ide-4444
+  spec:
+    port:
+      targetPort: 4444
+    to:
+      kind: Service
+      name: theia
+      weight: 100
+    wildcardPolicy: None
+  status: {}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: theia
+    name: ide-8081
+  spec:
+    port:
+      targetPort: 8081
+    to:
+      kind: Service
+      name: theia
+      weight: 100
+    wildcardPolicy: None
+  status: {}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: theia
+    name: ide-8082
+  spec:
+    port:
+      targetPort: 8082
+    to:
+      kind: Service
+      name: theia
+      weight: 100
+    wildcardPolicy: None
+  status: {}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: theia
+    name: ide-8083
+  spec:
+    port:
+      targetPort: 8083
+    to:
+      kind: Service
+      name: theia
+      weight: 100
+    wildcardPolicy: None
+  status: {}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: theia
+    name: ide-8084
+  spec:
+    port:
+      targetPort: 8084
+    to:
+      kind: Service
+      name: theia
+      weight: 100
+    wildcardPolicy: None
+  status: {}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: null
+    labels:
+      app: theia
+    name: ide-9000
+  spec:
+    port:
+      targetPort: 9000
+    to:
+      kind: Service
+      name: theia
+      weight: 100
+    wildcardPolicy: None
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    creationTimestamp: null
+    name: theia-data
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 10Gi
+  status: {}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    creationTimestamp: null
+    name: theia-plugin-data
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+  status: {}
+parameters:
+- description: Github Token
+  displayName: Github Token
+  name: GITHUB_TOKEN
+  required: true
+  value: ""
