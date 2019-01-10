@@ -478,6 +478,12 @@ objects:
       requests:
         storage: 1Gi
   status: {}
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: ide
+    annotations:
+      serviceaccounts.openshift.io/oauth-redirectreference.primary: '{"kind":"OAuthRedirectReference","apiVersion":"v1","reference":{"kind":"Route","name":"ide"}}'  
 parameters:
 - description: Github Token
   displayName: Github Token
