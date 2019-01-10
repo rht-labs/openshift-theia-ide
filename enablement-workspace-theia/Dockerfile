@@ -71,7 +71,7 @@ WORKDIR /home/theia/project
 # generic server ports
 EXPOSE 4200 4444 8080 9000 3000 8081 8082 8083 8084 3000
 
-COPY entrypoint /home/theia 
+ADD https://raw.githubusercontent.com/springdo/openshift-theia-ide/master/enablement-workspace-theia/entrypoint /home/theia 
 USER root
 RUN chgrp -R 0 /home/theia && \
   chmod a+x /home/theia/entrypoint && \
