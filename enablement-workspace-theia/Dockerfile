@@ -11,13 +11,13 @@ enabled=1 \n\
 gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc' >  mongodb-org-4.0.repo  && \
     mv mongodb-org-4.0.repo /etc/yum.repos.d/  && \
     curl -sL https://rpm.nodesource.com/setup_8.x | bash && \
-    yum install -y mongodb-org ansible zsh git curl gcc-c++ g++ automake python build-essential wget sudo nodejs java-1.8.0-openjdk-devel psmisc && \
+    yum install -y mongodb-org ansible zsh git curl gcc-c++ g++ automake python build-essential wget sudo nodejs java-1.8.0-openjdk-devel psmisc epel-release ansible && \
     yum clean all
 
 # Install jq
 # http://stedolan.github.io/jq/
 RUN curl -o /usr/local/bin/jq -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
-chmod +x /usr/local/bin/jq
+  chmod +x /usr/local/bin/jq
 
 # Set the JAVA_HOME variable to make it clear where Java is located
 ENV JAVA_HOME /usr/lib/jvm/java
@@ -29,11 +29,6 @@ RUN curl -o /etc/pki/ca-trust/source/anchors/lets-encrypt-x3-cross-signed.crt ht
 # Install OpenShift Client
 RUN curl https://mirror.openshift.com/pub/openshift-v3/clients/3.11.66/linux/oc.tar.gz | tar -C /usr/local/bin/ -xzf -
 
-# Install last Ansible version
-
-RUN yum install epel-release -y && \
-    yum install ansible -y
-
 ## User account
 RUN useradd -ms /bin/bash -d /home/theia theia && \
   chmod g+rw /home && \
@@ -43,6 +38,7 @@ RUN useradd -ms /bin/bash -d /home/theia theia && \
 
 ENV HOME /home/theia
 USER theia
+
 # NodeJS Stuff
 RUN unset NPM_CONFIG_PREFIX && \
   git clone https://github.com/robbyrussell/oh-my-zsh.git $HOME/.oh-my-zsh && \
