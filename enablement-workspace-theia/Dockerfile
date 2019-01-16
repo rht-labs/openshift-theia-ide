@@ -11,7 +11,7 @@ enabled=1 \n\
 gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc' >  mongodb-org-4.0.repo  && \
     mv mongodb-org-4.0.repo /etc/yum.repos.d/  && \
     curl -sL https://rpm.nodesource.com/setup_8.x | bash && \
-    yum install -y mongodb-org ansible zsh git curl gcc-c++ g++ automake python build-essential wget sudo nodejs java-1.8.0-openjdk-devel psmisc epel-release ansible && \
+    yum install -y mongodb-org ansible zsh git curl gcc-c++ g++ automake python build-essential wget sudo nodejs java-1.8.0-openjdk-devel psmisc epel-release ansible maven && \
     yum clean all
 
 # Install jq
