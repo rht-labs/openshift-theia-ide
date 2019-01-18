@@ -43,6 +43,7 @@ RUN unset NPM_CONFIG_PREFIX && \
   echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> $HOME/.zshrc && \
   echo 'export NVM_DIR="$HOME/.nvm"' >> $HOME/.bashrc && \
   echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> $HOME/.bashrc && \
+  echo 'scl enable rh-maven35 bash' >> $HOME/.bashrc && \
   echo 'scl enable rh-maven35 bash' >> $HOME/.zshrc && \
   source $HOME/.bashrc && \
   nvm install v10 && \
