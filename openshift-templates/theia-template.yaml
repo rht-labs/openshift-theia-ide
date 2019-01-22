@@ -231,7 +231,7 @@ objects:
     source:
       git:
         ref: master
-        uri: https://github.com/springdo/openshift-theia-ide.git
+        uri: https://github.com/rht-labs/openshift-theia-ide.git
       type: Git
     strategy:
       dockerStrategy:
