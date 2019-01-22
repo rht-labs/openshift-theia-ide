@@ -230,8 +230,8 @@ objects:
     runPolicy: Serial
     source:
       git:
-        ref: master
-        uri: https://github.com/rht-labs//openshift-theia-ide.git
+        ref: boeing
+        uri: https://github.com/rht-labs/openshift-theia-ide.git
       type: Git
     strategy:
       dockerStrategy:
