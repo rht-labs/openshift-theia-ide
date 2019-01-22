@@ -8,6 +8,11 @@ Beefy Image containing tooling used by the Red Hat Open Innovation Labs Enableme
 * Angular CLI
 * jq
 
+## Theia Extensions
+
+Check all available Theia extensions [here](https://www.npmjs.com/search?q=keywords:theia-extension).
+You can add more extensions to the image by editing the `packaje.json` file, defined in the Dockerfile.
+
 ## Build and deploy
 1. `oc login`.
 2. `./deploy-theia.sh <NAMESPACE> <GITHUB_TOKEN>`.
