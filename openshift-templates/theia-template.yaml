@@ -9,10 +9,10 @@ metadata:
     description: Create a Workspace in OpenShift using Theia IDE
     iconClass: icon-datagrid
     openshift.io/display-name: Labs Workspace (Theia IDE)
-    openshift.io/documentation-url: https://github.com/springdo/openshift-theia-ide/blob/master/README.md
+    openshift.io/documentation-url: https://github.com/rht-labs/openshift-theia-ide/blob/master/README.md
     openshift.io/long-description: This template will create the required objects to run a persistent Workspace in OpenShift using Theia IDE
     openshift.io/provider-display-name: Red Hat Open Innovation Labs
-    openshift.io/support-url: https://github.com/springdo/openshift-theia-ide
+    openshift.io/support-url: https://github.com/rht-labs/openshift-theia-ide
     tags: labs-workspace,theia
   name: labs-workspace-persistent
   namespace: openshift
