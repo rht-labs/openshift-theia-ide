@@ -12,7 +12,7 @@ Beefy Image containing tooling used by the Red Hat Open Innovation Labs Enableme
 
 Check all available Theia extensions [here](https://www.npmjs.com/search?q=keywords:theia-extension).
 
-To deploy VSCode extensions, you can use the command *"Deploy plugin by id"* from the command palette. When asked for a parameter, enter the following: *"vscode:extension/"*. " stands for the "Unique Identifier" from the extension homepage in the VS Code Marketplace.
+To deploy VSCode extensions, you can use the command *"Deploy plugin by id"* from the command palette. When asked for a parameter, enter the following: *"vscode:extension/"*. " stands for the "Unique Identifier" from the extension homepage in the VS Code Marketplace. e.g *vscode:extension/dbaeumer.vscode-eslint*
 
 
 ## Build and deploy
