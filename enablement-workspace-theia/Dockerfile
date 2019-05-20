@@ -28,7 +28,7 @@ RUN curl -o /etc/pki/ca-trust/source/anchors/lets-encrypt-x3-cross-signed.crt ht
     update-ca-trust extract
 
 # Install OpenShift Client
-RUN curl https://mirror.openshift.com/pub/openshift-v3/clients/3.11.98/linux/oc.tar.gz | tar -C /usr/local/bin/ -xzf -
+RUN curl -m 800 https://mirror.openshift.com/pub/openshift-v3/clients/3.11.98/linux/oc.tar.gz | tar -C /usr/local/bin/ -xzf -
 
 ## User account
 RUN useradd -ms /bin/bash -d /home/theia theia && \
