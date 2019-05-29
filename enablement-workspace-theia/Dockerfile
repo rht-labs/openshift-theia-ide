@@ -72,11 +72,13 @@ RUN unset NPM_CONFIG_PREFIX && \
 ARG GITHUB_TOKEN
 ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 WORKDIR $HOME/ide
+
+ENV NODE_OPTIONS=--max_old_space_size=8000
+
 RUN source $HOME/.bashrc && \
 #   echo '{"private":true,"dependencies":{"@theia/application-package":"next","@theia/typescript":"next","typescript":"latest","@theia/navigator":"next","@theia/terminal":"next","@theia/plugin-ext-vscode":"next","@theia/monaco":"next","@theia/editorconfig":"next","@theia/outline-view":"next","@theia/preferences":"next","@theia/messages":"next","@theia/git":"next","@theia/file-search":"next","@theia/markers":"next","@theia/preview":"next","@theia/callhierarchy":"next","@theia/merge-conflicts":"next","@theia/search-in-workspace":"next","@theia/json":"next","@theia/textmate-grammars":"next","@theia/mini-browser":"next","@theia/plugin-ext":"next", "@theia/extension-manager":"next"},"devDependencies":{"@theia/cli":"next"}}' > package.json && \
   echo '{"private":true,"dependencies":{"@theia/application-package":"0.7.0-next.086ce720","@theia/typescript":"0.7.0-next.086ce720","typescript":"latest","@theia/navigator":"0.7.0-next.086ce720","@theia/terminal":"0.7.0-next.086ce720","@theia/plugin-ext-vscode":"0.7.0-next.086ce720","@theia/monaco":"0.7.0-next.086ce720","@theia/editorconfig":"0.7.0-next.086ce720","@theia/outline-view":"0.7.0-next.086ce720","@theia/preferences":"0.7.0-next.086ce720","@theia/messages":"0.7.0-next.086ce720","@theia/git":"0.7.0-next.086ce720","@theia/file-search":"0.7.0-next.086ce720","@theia/markers":"0.7.0-next.086ce720","@theia/preview":"0.7.0-next.086ce720","@theia/callhierarchy":"0.7.0-next.086ce720","@theia/merge-conflicts":"0.7.0-next.086ce720","@theia/search-in-workspace":"0.7.0-next.086ce720","@theia/json":"0.7.0-next.086ce720","@theia/textmate-grammars":"0.7.0-next.086ce720","@theia/mini-browser":"0.7.0-next.086ce720","@theia/plugin-ext":"0.7.0-next.086ce720", "@theia/extension-manager":"0.7.0-next.086ce720"},"devDependencies":{"@theia/cli":"0.7.0-next.086ce720"}}' > package.json && \
-  node --max_old_space_size=8000 $(which npm) install -g yarn && \
-#  npm install -g yarn && \
+  npm install -g yarn && \
   yarn install --force  
 RUN source $HOME/.bashrc && \
   ls -la  && \
