@@ -1,6 +1,9 @@
 FROM centos:centos7
 # USER root
 
+ARG MAVEN_VERSION=3.6.0
+ARG MAVEN_URL=https://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
+
 # MongoDB stuff / ansible / OC client
 RUN touch 'mongodb-org-4.0.repo' && \
     echo $'[mongodb-org-4.0] \n\
@@ -13,6 +16,9 @@ gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc' >  mongodb-org-4.0.rep
     curl -sL https://rpm.nodesource.com/setup_8.x | bash && \
     yum install -y mongodb-org zsh git curl gcc-c++ g++ automake python build-essential wget sudo nodejs java-1.8.0-openjdk-devel psmisc epel-release && \
     yum install -y ansible && \
+    mkdir -p /usr/share/maven && \
+    curl -fsSL ${MAVEN_URL} | tar -xzC /usr/share/maven --strip-components=1 && \
+    ln -s /usr/share/maven/bin/mvn /usr/bin/mvn && \
     yum clean all
 
 # Install jq
@@ -39,6 +45,10 @@ RUN useradd -ms /bin/bash -d /home/theia theia && \
 
 ENV HOME /home/theia
 USER theia
+
+ENV MAVEN_HOME /home/theia
+ENV MAVEN_CONFIG ${MAVEN_HOME}/.m2
+ENV MAVEN_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
 
 # NodeJS Stuff
 RUN unset NPM_CONFIG_PREFIX && \

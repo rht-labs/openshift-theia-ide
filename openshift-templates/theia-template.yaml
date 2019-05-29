@@ -231,7 +231,7 @@ objects:
     source:
       git:
         ref: master
-        uri: https://github.com/rht-labs/openshift-theia-ide.git
+        uri: ${SOURCE_URL}
       type: Git
     strategy:
       dockerStrategy:
@@ -501,4 +501,9 @@ parameters:
 - description: Github Token
   displayName: Github Token
   name: GITHUB_TOKEN
+  required: true
+- name: SOURCE_URL
+  displayName: Git Source URL to build from
+  description: Git Source URL to build from
+  value: https://github.com/rht-labs/openshift-theia-ide.git
   required: true
