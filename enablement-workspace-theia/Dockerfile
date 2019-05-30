@@ -28,7 +28,7 @@ RUN curl -o /etc/pki/ca-trust/source/anchors/lets-encrypt-x3-cross-signed.crt ht
     update-ca-trust extract
 
 # Install OpenShift Client
-RUN curl https://mirror.openshift.com/pub/openshift-v3/clients/3.11.66/linux/oc.tar.gz | tar -C /usr/local/bin/ -xzf -
+RUN curl https://mirror.openshift.com/pub/openshift-v3/clients/3.11.82/linux/oc.tar.gz | tar -C /usr/local/bin/ -xzf -
 
 ## User account
 RUN useradd -ms /bin/bash -d /home/theia theia && \
@@ -64,7 +64,7 @@ ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 WORKDIR $HOME/ide
 RUN source $HOME/.bashrc && \
 #   echo '{"private":true,"dependencies":{"@theia/application-package":"next","@theia/typescript":"next","typescript":"latest","@theia/navigator":"next","@theia/terminal":"next","@theia/plugin-ext-vscode":"next","@theia/monaco":"next","@theia/editorconfig":"next","@theia/outline-view":"next","@theia/preferences":"next","@theia/messages":"next","@theia/git":"next","@theia/file-search":"next","@theia/markers":"next","@theia/preview":"next","@theia/callhierarchy":"next","@theia/merge-conflicts":"next","@theia/search-in-workspace":"next","@theia/json":"next","@theia/textmate-grammars":"next","@theia/mini-browser":"next","@theia/plugin-ext":"next", "@theia/extension-manager":"next"},"devDependencies":{"@theia/cli":"next"}}' > package.json && \
-  echo '{"private":true,"dependencies":{"@theia/application-package":"0.4.0-next.f69caeba","@theia/typescript":"0.4.0-next.f69caeba","typescript":"latest","@theia/navigator":"0.4.0-next.f69caeba","@theia/terminal":"0.4.0-next.f69caeba","@theia/plugin-ext-vscode":"0.4.0-next.f69caeba","@theia/monaco":"0.4.0-next.f69caeba","@theia/editorconfig":"0.4.0-next.f69caeba","@theia/outline-view":"0.4.0-next.f69caeba","@theia/preferences":"0.4.0-next.f69caeba","@theia/messages":"0.4.0-next.f69caeba","@theia/git":"0.4.0-next.f69caeba","@theia/file-search":"0.4.0-next.f69caeba","@theia/markers":"0.4.0-next.f69caeba","@theia/preview":"0.4.0-next.f69caeba","@theia/callhierarchy":"0.4.0-next.f69caeba","@theia/merge-conflicts":"0.4.0-next.f69caeba","@theia/search-in-workspace":"0.4.0-next.f69caeba","@theia/json":"0.4.0-next.f69caeba","@theia/textmate-grammars":"0.4.0-next.f69caeba","@theia/mini-browser":"0.4.0-next.f69caeba","@theia/plugin-ext":"0.4.0-next.f69caeba", "@theia/extension-manager":"0.4.0-next.f69caeba"},"devDependencies":{"@theia/cli":"0.4.0-next.f69caeba"}}' > package.json && \
+  echo '{"private":true,"dependencies":{"@theia/application-package":"0.4.0","@theia/typescript":"0.4.0","typescript":"latest","@theia/navigator":"0.4.0","@theia/terminal":"0.4.0","@theia/plugin-ext-vscode":"0.4.0","@theia/monaco":"0.4.0","@theia/editorconfig":"0.4.0","@theia/outline-view":"0.4.0","@theia/preferences":"0.4.0","@theia/messages":"0.4.0","@theia/git":"0.4.0","@theia/file-search":"0.4.0","@theia/markers":"0.4.0","@theia/preview":"0.4.0","@theia/callhierarchy":"0.4.0","@theia/merge-conflicts":"0.4.0","@theia/search-in-workspace":"0.4.0","@theia/json":"0.4.0","@theia/textmate-grammars":"0.4.0","@theia/mini-browser":"0.4.0","@theia/plugin-ext":"0.4.0", "@theia/extension-manager":"0.4.0"},"devDependencies":{"@theia/cli":"0.4.0"}}' > package.json && \
   npm install -g yarn && \
   yarn install --force  
 RUN source $HOME/.bashrc && \
