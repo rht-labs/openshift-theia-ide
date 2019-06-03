@@ -1,6 +1,9 @@
 FROM centos:centos7
 # USER root
 
+ARG MAVEN_VERSION=3.6.0
+ARG MAVEN_URL=https://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
+
 # MongoDB stuff / ansible / OC client
 RUN touch 'mongodb-org-4.0.repo' && \
     echo $'[mongodb-org-4.0] \n\
@@ -13,6 +16,9 @@ gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc' >  mongodb-org-4.0.rep
     curl -sL https://rpm.nodesource.com/setup_8.x | bash && \
     yum install -y mongodb-org zsh git curl gcc-c++ g++ automake python build-essential wget sudo nodejs java-1.8.0-openjdk-devel psmisc epel-release && \
     yum install -y ansible && \
+    mkdir -p /usr/share/maven && \
+    curl -fsSL ${MAVEN_URL} | tar -xzC /usr/share/maven --strip-components=1 && \
+    ln -s /usr/share/maven/bin/mvn /usr/bin/mvn && \
     yum clean all
 
 # Install jq
@@ -28,7 +34,7 @@ RUN curl -o /etc/pki/ca-trust/source/anchors/lets-encrypt-x3-cross-signed.crt ht
     update-ca-trust extract
 
 # Install OpenShift Client
-RUN curl https://mirror.openshift.com/pub/openshift-v3/clients/3.11.82/linux/oc.tar.gz | tar -C /usr/local/bin/ -xzf -
+RUN curl -m 800 https://mirror.openshift.com/pub/openshift-v3/clients/3.11.98/linux/oc.tar.gz | tar -C /usr/local/bin/ -xzf -
 
 ## User account
 RUN useradd -ms /bin/bash -d /home/theia theia && \
@@ -39,6 +45,10 @@ RUN useradd -ms /bin/bash -d /home/theia theia && \
 
 ENV HOME /home/theia
 USER theia
+
+ENV MAVEN_HOME /home/theia
+ENV MAVEN_CONFIG ${MAVEN_HOME}/.m2
+ENV MAVEN_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
 
 # NodeJS Stuff
 RUN unset NPM_CONFIG_PREFIX && \
@@ -62,9 +72,12 @@ RUN unset NPM_CONFIG_PREFIX && \
 ARG GITHUB_TOKEN
 ENV GITHUB_TOKEN=${GITHUB_TOKEN}
 WORKDIR $HOME/ide
+
+ENV NODE_OPTIONS=--max_old_space_size=8000
+
 RUN source $HOME/.bashrc && \
 #   echo '{"private":true,"dependencies":{"@theia/application-package":"next","@theia/typescript":"next","typescript":"latest","@theia/navigator":"next","@theia/terminal":"next","@theia/plugin-ext-vscode":"next","@theia/monaco":"next","@theia/editorconfig":"next","@theia/outline-view":"next","@theia/preferences":"next","@theia/messages":"next","@theia/git":"next","@theia/file-search":"next","@theia/markers":"next","@theia/preview":"next","@theia/callhierarchy":"next","@theia/merge-conflicts":"next","@theia/search-in-workspace":"next","@theia/json":"next","@theia/textmate-grammars":"next","@theia/mini-browser":"next","@theia/plugin-ext":"next", "@theia/extension-manager":"next"},"devDependencies":{"@theia/cli":"next"}}' > package.json && \
-  echo '{"private":true,"dependencies":{"@theia/application-package":"0.4.0","@theia/typescript":"0.4.0","typescript":"latest","@theia/navigator":"0.4.0","@theia/terminal":"0.4.0","@theia/plugin-ext-vscode":"0.4.0","@theia/monaco":"0.4.0","@theia/editorconfig":"0.4.0","@theia/outline-view":"0.4.0","@theia/preferences":"0.4.0","@theia/messages":"0.4.0","@theia/git":"0.4.0","@theia/file-search":"0.4.0","@theia/markers":"0.4.0","@theia/preview":"0.4.0","@theia/callhierarchy":"0.4.0","@theia/merge-conflicts":"0.4.0","@theia/search-in-workspace":"0.4.0","@theia/json":"0.4.0","@theia/textmate-grammars":"0.4.0","@theia/mini-browser":"0.4.0","@theia/plugin-ext":"0.4.0", "@theia/extension-manager":"0.4.0"},"devDependencies":{"@theia/cli":"0.4.0"}}' > package.json && \
+  echo '{"private":true,"dependencies":{"@theia/application-package":"0.7.0-next.086ce720","@theia/typescript":"0.7.0-next.086ce720","typescript":"latest","@theia/navigator":"0.7.0-next.086ce720","@theia/terminal":"0.7.0-next.086ce720","@theia/plugin-ext-vscode":"0.7.0-next.086ce720","@theia/monaco":"0.7.0-next.086ce720","@theia/editorconfig":"0.7.0-next.086ce720","@theia/outline-view":"0.7.0-next.086ce720","@theia/preferences":"0.7.0-next.086ce720","@theia/messages":"0.7.0-next.086ce720","@theia/git":"0.7.0-next.086ce720","@theia/file-search":"0.7.0-next.086ce720","@theia/markers":"0.7.0-next.086ce720","@theia/preview":"0.7.0-next.086ce720","@theia/callhierarchy":"0.7.0-next.086ce720","@theia/merge-conflicts":"0.7.0-next.086ce720","@theia/search-in-workspace":"0.7.0-next.086ce720","@theia/json":"0.7.0-next.086ce720","@theia/textmate-grammars":"0.7.0-next.086ce720","@theia/mini-browser":"0.7.0-next.086ce720","@theia/plugin-ext":"0.7.0-next.086ce720", "@theia/extension-manager":"0.7.0-next.086ce720"},"devDependencies":{"@theia/cli":"0.7.0-next.086ce720"}}' > package.json && \
   npm install -g yarn && \
   yarn install --force  
 RUN source $HOME/.bashrc && \
